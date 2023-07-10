@@ -1,9 +1,11 @@
-import { CameraType } from "expo-camera";
+import { BarCodeScanningResult, CameraType } from "expo-camera";
 import Camera from "expo-camera/build/Camera";
 import { useEffect, useState } from "react";
 import { Platform } from "react-native";
+import { Button } from "react-native";
 import { View, StyleSheet, TouchableOpacity, Text, Dimensions } from "react-native";
 import Toast from "react-native-root-toast";
+import * as WebBrowser from 'expo-web-browser';
 
 enum PermissionText{
   GRANTED = 'Call this function successfully',
@@ -13,6 +15,7 @@ enum PermissionText{
 export default function CameraDemo(){
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [codeScanned, setCodeScanned] = useState(false);
   const [ratio, setRatio] = useState('4:3');
   const cameraWidth = 300;
   const [cameraHeight, setCameraHeight] = useState(225);
@@ -75,15 +78,32 @@ export default function CameraDemo(){
     }
   }
 
+  const onBarCodeScanned = async (scanResult:BarCodeScanningResult) => {
+    console.log(scanResult, '扫码结果');
+    // WebBrowser.openBrowserAsync('https://m.baidu.com/?from=1020786r')
+    const list = await WebBrowser.getCustomTabsSupportingBrowsersAsync()
+    console.log('支持的浏览器', list)
+    WebBrowser.openBrowserAsync('https://m.baidu.com/', {browserPackage: list.browserPackages[1]});
+    setCodeScanned(true);
+  }
+
   return (
     <View style={styles.container}>
-      <Camera type={type} style={{width: cameraWidth, height: cameraHeight}} ratio={ratio} ref={(ref)=>ref&&setCamera(ref)} onCameraReady={prepare4Camera} >
-        <View>
-          <TouchableOpacity onPress={toggleCameraType}>
-            <Text style={styles.text}>Toggle Camera</Text>
-          </TouchableOpacity>
+      <Camera type={type} 
+        style={[{width: cameraWidth, height: cameraHeight}, styles.camera]} 
+        ratio={ratio} 
+        ref={(ref)=>ref&&setCamera(ref)} 
+        onCameraReady={prepare4Camera} 
+        onBarCodeScanned={codeScanned? undefined : onBarCodeScanned}
+        >
+        <View style={styles.cameraZone}>
+          <View style={styles.transparentZone} />
         </View>
       </Camera>
+      <View style={styles.buttonArea}>
+        <Button title="重新扫码" onPress={()=>{setCodeScanned(false)}} />
+        <Button title="翻转摄像头" onPress={toggleCameraType} />
+      </View>
     </View>
   )
 
@@ -99,7 +119,27 @@ const styles = StyleSheet.create(
     },
     text: {
       fontSize: 15,
-      color: 'green'
+      color: 'green',
+    },
+    camera: {
+    },
+    cameraZone: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0,0,0,0.2)'
+    },
+    transparentZone: {
+      margin: 'auto',
+      backgroundColor: 'rgba(256,256,256,0.1)',
+      width: 120,
+      height: 120
+    },
+    buttonArea: {
+      marginTop: 20,
+      width: 250,
+      flexDirection: "row",
+      justifyContent: 'space-around'
     }
   }
 )
