@@ -6,6 +6,7 @@ import { Button } from "react-native";
 import { View, StyleSheet, TouchableOpacity, Text, Dimensions } from "react-native";
 import Toast from "react-native-root-toast";
 import * as WebBrowser from 'expo-web-browser';
+import { useIsFocused } from "@react-navigation/native";
 
 enum PermissionText{
   GRANTED = 'Call this function successfully',
@@ -25,6 +26,7 @@ export default function CameraDemo(){
   const [camera, setCamera] = useState<Camera>();
   const supposeWidth = width*0.8;
   const desireRatio = 4/3;
+  const isFocused = useIsFocused();
   
 
   async function requestCameraPermission(){
@@ -74,6 +76,10 @@ export default function CameraDemo(){
         setRatio(closedRatio as string);
         console.log(closedRatio, '比例结果')
       }
+      if(Platform.OS === 'ios'){
+        setCameraHeight(400);
+      }
+
       setIsRatioSet(true);
     }
   }
@@ -81,15 +87,16 @@ export default function CameraDemo(){
   const onBarCodeScanned = async (scanResult:BarCodeScanningResult) => {
     console.log(scanResult, '扫码结果');
     // WebBrowser.openBrowserAsync('https://m.baidu.com/?from=1020786r')
-    const list = await WebBrowser.getCustomTabsSupportingBrowsersAsync()
-    console.log('支持的浏览器', list)
-    WebBrowser.openBrowserAsync('https://m.baidu.com/', {browserPackage: list.browserPackages[1]});
+    // const list = await WebBrowser.getCustomTabsSupportingBrowsersAsync()
+    // console.log('支持的浏览器', list)
+    WebBrowser.openBrowserAsync('https://m.baidu.com/');
     setCodeScanned(true);
   }
 
   return (
     <View style={styles.container}>
-      <Camera type={type} 
+      {isFocused && (
+        <Camera type={type} 
         style={[{width: cameraWidth, height: cameraHeight}, styles.camera]} 
         ratio={ratio} 
         ref={(ref)=>ref&&setCamera(ref)} 
@@ -100,6 +107,7 @@ export default function CameraDemo(){
           <View style={styles.transparentZone} />
         </View>
       </Camera>
+      )}
       <View style={styles.buttonArea}>
         <Button title="重新扫码" onPress={()=>{setCodeScanned(false)}} />
         <Button title="翻转摄像头" onPress={toggleCameraType} />
