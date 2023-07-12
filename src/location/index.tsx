@@ -27,11 +27,11 @@ export default function LocationDemo(){
         setErrorMsg('Permission to access location was denied')
         return;
       }
-        let addressInfo = await Location.reverseGeocodeAsync({longitude: 121.6058264,latitude: 31.1873357})
-        let location = await Location.getCurrentPositionAsync({accuracy: 1});
-        console.log( addressInfo,'准备定位', location);
-        const address = await map?.addressForCoordinate({longitude: 121.6058264, latitude: 31.1873357})
-        setLocation(location)
+      let addressInfo = await Location.reverseGeocodeAsync({longitude: 121.6058264,latitude: 31.1873357})
+      let location = await Location.getCurrentPositionAsync({});
+      console.log( addressInfo,'准备定位', location);
+      const address = await map?.addressForCoordinate({longitude: 121.6058264, latitude: 31.1873357})
+      setLocation(location)
     })();
   }, [])
 
