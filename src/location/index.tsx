@@ -16,7 +16,8 @@ export default function LocationDemo(){
   const [location, setLocation] = useState<Location.LocationObject>();
   const [errorMsg, setErrorMsg] = useState<string>('');
   const [state, setState] = useState({region})
-  const [map, setMap] = useState<MapView>();
+  const [addressInfo, setAdressInfo] = useState();
+  // const [map, setMap] = useState<MapView>();
 
 
   useEffect(()=>{
@@ -30,7 +31,8 @@ export default function LocationDemo(){
       let addressInfo = await Location.reverseGeocodeAsync({longitude: 121.6058264,latitude: 31.1873357})
       let location = await Location.getCurrentPositionAsync({});
       console.log( addressInfo,'准备定位', location);
-      const address = await map?.addressForCoordinate({longitude: 121.6058264, latitude: 31.1873357})
+      setAdressInfo(addressInfo as any);
+      // const address = await map?.addressForCoordinate({longitude: 121.6058264, latitude: 31.1873357})
       setLocation(location)
     })();
   }, [])
@@ -39,20 +41,20 @@ export default function LocationDemo(){
   if(errorMsg){
     text = errorMsg;
   }else if(location){
-    text = JSON.stringify(location);
+    text = JSON.stringify(addressInfo);
   }
 
   return(
     <View style={styles.container}>
-      <MapView           
+      {/* <MapView           
         style={styles.map}
-        ref={(ref)=>ref&&setMap(ref)}
+        //ref={(ref)=>ref&&setMap(ref)}
         >        
         <Marker
           coordinate={location?.coords? {latitude: 31.185113894810286, longitude: 121.61002409901754}: {latitude: 0, longitude: 0}}
           title='当前'
          />
-      </MapView>
+      </MapView> */}
       <Text style={styles.text}>{text}</Text>
     </View>
   )

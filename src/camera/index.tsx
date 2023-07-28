@@ -79,7 +79,6 @@ export default function CameraDemo(){
       if(Platform.OS === 'ios'){
         setCameraHeight(400);
       }
-
       setIsRatioSet(true);
     }
   }
@@ -89,7 +88,7 @@ export default function CameraDemo(){
     // WebBrowser.openBrowserAsync('https://m.baidu.com/?from=1020786r')
     // const list = await WebBrowser.getCustomTabsSupportingBrowsersAsync()
     // console.log('支持的浏览器', list)
-    WebBrowser.openBrowserAsync('https://m.baidu.com/');
+    WebBrowser.openBrowserAsync(scanResult.data || 'https://m.baidu.com/');
     setCodeScanned(true);
   }
 
